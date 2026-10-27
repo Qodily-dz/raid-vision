@@ -1,109 +1,165 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# Raid VISION
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+A multilingual, one-page portfolio and CMS for a filmmaker. Dark violet cinematic
+front end, Supabase back end, admin for projects, gallery, services, enquiries,
+media and site settings.
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+The public site is a **single scrolling page**: work, showreel, services, gallery,
+about and the enquiry form are all sections of `/[locale]`, and the header nav
+scrolls between them. The dedicated routes (`/work`, `/gallery`, `/services`,
+`/about`, `/contact`) still exist for search engines and deep links, but nothing
+in the primary navigation sends you to them.
 
-## Features
+## Stack
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Proxy
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+| Concern | Choice |
+| --- | --- |
+| Framework | Next.js 16 (App Router), React 19, TypeScript |
+| Styling | Tailwind CSS 3.4, CSS custom properties in `app/globals.css` |
+| Data | Supabase Postgres (`raid_db`), `@supabase/ssr` |
+| Auth | Supabase Auth, email + password, cookie sessions |
+| Storage | Supabase Storage, public `raid-media` bucket |
+| i18n | `ar` (RTL, default `/` → `/ar`), `fr`, `en` |
 
-## Demo
+## Getting started
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+```bash
+npm install
+cp .env.example .env.local   # then fill in the values
+npm run dev
+```
 
-## Deploy to Vercel
+The site runs on <http://localhost:3000>. `/` redirects to the default locale
+(`/ar`).
 
-Vercel deployment will guide you through creating a Supabase account and project.
+### Environment
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+| Variable | Notes |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL, e.g. `https://<ref>.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable (or legacy anon) key. Must match the name used in `lib/supabase/*.ts` |
+| `NEXT_PUBLIC_SITE_URL` | Absolute site origin, used for canonicals and OG tags |
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+Keep the service-role key server-only. It is not read from `NEXT_PUBLIC_*` and
+must never reach the browser.
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+## Database
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+All tables live in the **`raid_db`** schema, not `public`.
 
-## Clone and run locally
-
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
-
-2. Create a Next.js app using the Supabase Starter template npx command
+1. **Authenticate the CLI** with a Supabase Personal Access Token:
 
    ```bash
-   npx create-next-app --example with-supabase with-supabase-app
+   npx supabase login
    ```
+
+2. **Link the project**:
 
    ```bash
-   yarn create next-app --example with-supabase with-supabase-app
+   npx supabase link --project-ref <project-ref>
    ```
+
+3. **Apply the migration**:
 
    ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
+   npx supabase db push --dry-run   # inspect first
+   npx supabase db push
    ```
 
-3. Use `cd` to change into the app's directory
+   The migration is `supabase/migrations/20261001094046_create_raid_vision_schema.sql`.
+   It creates the schema, every table, indexes, `updated_at` triggers, RLS
+   policies, Storage policies, the public `raid-media` bucket, and the category
+   seed rows.
+
+4. **Expose `raid_db` to the Data API.** The app queries through PostgREST, so
+   the schema has to be exposed: **Settings → API → Exposed schemas**. Without
+   this, queries fail with `Could not find the table 'raid_db.projects' in the
+   schema cache`.
+
+5. **Regenerate types** (replaces the handwritten ones in
+   `types/database.types.ts`):
 
    ```bash
-   cd with-supabase-app
+   npx supabase gen types typescript --linked > types/database.types.ts
    ```
 
-4. Rename `.env.example` to `.env.local` and update the following:
+### Optional demo content
 
-  ```env
-  NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[INSERT SUPABASE PROJECT API PUBLISHABLE OR ANON KEY]
-  ```
-  > [!NOTE]
-  > This example uses `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, which refers to Supabase's new **publishable** key format.
-  > Both legacy **anon** keys and new **publishable** keys can be used with this variable name during the transition period. Supabase's dashboard may show `NEXT_PUBLIC_SUPABASE_ANON_KEY`; its value can be used in this example.
-  > See the [full announcement](https://github.com/orgs/supabase/discussions/29260) for more information.
+`supabase/seed.demo.sql` is **not** a migration and is never applied by
+`db push`. Run it once from the SQL editor if you want the landing page to have
+something in it before you upload your own work — it fills site settings,
+six services and six published projects with EN/FR/AR copy. It references no
+uploaded media, so there are no broken images, and every statement is
+idempotent. The file ends with the statements that undo it.
 
-  Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+## First administrator
 
-5. You can now run the Next.js local development server:
+1. **Create the user** in Supabase → Authentication → Users → *Add user*.
+   Tick **Auto Confirm User** so no confirmation email is needed.
+2. **Grant admin** — run in the SQL editor, substituting the email:
 
-   ```bash
-   npm run dev
+   ```sql
+   insert into raid_db.admin_users (user_id, email, role)
+   values (
+     '<user-uuid>',
+     'you@example.com',
+     'admin'
+   );
    ```
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+   To find the UUID: `select id, email from auth.users;`
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+3. Sign in at `/admin/login`.
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+Authorization is enforced server-side on every mutation by `requireAdmin` /
+`assertAdmin` in `lib/auth/admin.ts`, which re-checks the session and the
+`admin_users` row rather than trusting the UI. RLS is the second line of defence.
 
-## Feedback and issues
+## Admin
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+`/admin` is English-only and LTR, and is not wrapped in the locale layout.
 
-## More Supabase examples
+Implemented: login, forgot/reset password, auth callback, dashboard overview,
+project listing, and shared form/upload/auth components.
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+**Still to build** — the nav links to these, so they 404 for a signed-in admin:
+
+- `/admin/projects/new` and `/admin/projects/[id]`
+- `/admin/gallery`
+- `/admin/services`
+- `/admin/messages`
+- `/admin/media`
+- `/admin/settings`
+
+The server actions they need already exist in `lib/actions/` (`projects.ts`,
+`gallery.ts`, `services.ts`, `inquiries.ts`, `media.ts`, `settings.ts`), so
+these are UI-only tasks.
+
+## Uploads
+
+Media is uploaded client-side to the `raid-media` bucket with progress feedback,
+then the returned storage path is written to the row. Validation lives in
+`lib/media/storage.ts`; accepted MIME types and size limits are enforced on both
+the client and the server action.
+
+## Checks
+
+```bash
+npm run lint        # eslint, zero warnings
+npx tsc --noEmit    # types
+npm run build       # production build
+```
+
+## Notes for contributors
+
+- **Never rewrite source files through PowerShell string replacement.** It
+  corrupts the Arabic copy in `lib/i18n/dictionaries/ar.ts` and in SQL seeds.
+  Use the editor, or `node`, when a file contains RTL text.
+- Colours are CSS variables in `app/globals.css` (`--black`, `--char`,
+  `--violet`, `--glow`, `--neon`, `--haze`). There is no second palette.
+- Every section renders even with an empty database, via
+  `components/cinematic/section-empty.tsx`. A portfolio with missing sections
+  reads as broken, so sections must not be conditionally removed.
+- `scroll-margin-top` is set on `[id]` so anchored sections clear the fixed
+  header.
+- `prefers-reduced-motion` is respected throughout.
