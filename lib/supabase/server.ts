@@ -1,18 +1,21 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import type { Database } from "@/types/database.types";
 
 /**
- * Especially important if using Fluid compute: Don't put this client in a
- * global variable. Always create a new client within each function when using
- * it.
+ * Server client bound to the signed-in user's cookie session.
+ *
+ * Authorization is enforced by Row Level Security in `raid_db`, so the same
+ * client is safe to use for both public reads and CMS writes.
  */
 export async function createClient() {
   const cookieStore = await cookies();
 
-  return createServerClient(
+  return createServerClient<Database, "raid_db">(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
+      db: { schema: "raid_db" },
       cookies: {
         getAll() {
           return cookieStore.getAll();
@@ -23,9 +26,8 @@ export async function createClient() {
               cookieStore.set(name, value, options),
             );
           } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have proxy refreshing
-            // user sessions.
+            // Called from a Server Component, where cookies are read-only.
+            // `proxy.ts` refreshes the session, so this is safe to ignore.
           }
         },
       },
