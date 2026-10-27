@@ -20,6 +20,8 @@ import ProjectCard from "@/components/projects/project-card";
 import GalleryBrowser from "@/components/gallery/gallery-browser";
 import ContactForm from "@/components/contact/contact-form";
 import { formatPrice } from "@/components/services/service-card";
+import { buildVideoObjectSchema } from "@/lib/seo/json-ld";
+import JsonLd from "@/components/seo/json-ld";
 
 /** Breaks the brand into title-card lines: "Raid VISION" reads as two beats. */
 function titleLines(brandName: string): string[] {
@@ -70,8 +72,17 @@ export default async function HomePage({
   const portrait = getPublicMediaUrl(settings.heroPosterPath);
 
   const statement = settings.tagline || settings.shortIntro;
-  const lines = titleLines(settings.brandName);
+  const lines = titleLines(settings.brandName || "Raid VISION");
   const availability = dict.admin.settings.availabilityOptions[settings.availabilityStatus];
+
+  const videoSchema = (heroVideo || showreel)
+    ? buildVideoObjectSchema({
+        name: `${settings.brandName || "Raid VISION"} — Showreel & Cinematography`,
+        description: settings.shortIntro || settings.tagline || dict.home.statement,
+        thumbnailUrl: showreelPoster || heroPoster,
+        contentUrl: showreel || heroVideo,
+      })
+    : null;
 
   // Contact channels, shared by the contact section and the footer.
   const channels = [
@@ -103,6 +114,8 @@ export default async function HomePage({
 
   return (
     <>
+      {videoSchema ? <JsonLd schema={videoSchema} /> : null}
+
       {/* ================================================================ Hero
           Framed like a shot: lit stage, vignette, a drifting transport line,
           crop marks, viewfinder rails, and a title that lands line by line. */}

@@ -11,6 +11,10 @@ import { getPublicMediaUrl } from "@/lib/media/storage";
 import { siteUrl } from "@/lib/utils";
 import CaseStudy from "@/components/projects/case-study";
 
+import { buildAlternateLanguages } from "@/lib/seo/metadata";
+import { buildProjectSchema, buildBreadcrumbSchema } from "@/lib/seo/json-ld";
+import JsonLd from "@/components/seo/json-ld";
+
 type Params = { params: Promise<{ locale: string; slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
@@ -22,19 +26,22 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     return { title: getDictionary(locale).project.missing };
   }
 
-  const cover = getPublicMediaUrl(project.coverPosterPath);
+  const cover = getPublicMediaUrl(project.coverPosterPath) || getPublicMediaUrl(project.coverMediaPath);
   const canonical = `${siteUrl}/${locale}/work/${project.slug}`;
 
   return {
     title: project.seoTitle || project.title,
     description: project.seoDescription || project.summary,
-    alternates: { canonical },
+    alternates: {
+      canonical,
+      languages: buildAlternateLanguages(`/work/${project.slug}`),
+    },
     openGraph: {
       type: "article",
       title: project.seoTitle || project.title,
       description: project.seoDescription || project.summary,
       url: canonical,
-      images: cover ? [{ url: cover, width: 1200, height: 630 }] : undefined,
+      images: cover ? [{ url: cover, width: 1200, height: 630, alt: project.title }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
@@ -47,6 +54,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function ProjectPage({ params }: Params) {
   const { locale, slug } = await params;
+  const dict = getDictionary(locale);
 
   const project = await getProjectBySlug(locale, slug);
 
@@ -59,5 +67,22 @@ export default async function ProjectPage({ params }: Params) {
     getRelatedProjects(locale, project),
   ]);
 
-  return <CaseStudy project={project} locale={locale} nextProject={nextProject} related={related} />;
+  const cover = getPublicMediaUrl(project.coverPosterPath) || getPublicMediaUrl(project.coverMediaPath);
+  const projectSchema = buildProjectSchema(project, locale, cover);
+  const breadcrumbSchema = buildBreadcrumbSchema(
+    [
+      { name: dict.nav.home, path: "" },
+      { name: dict.nav.work, path: "/work" },
+      { name: project.title, path: `/work/${project.slug}` },
+    ],
+    locale,
+  );
+
+  return (
+    <>
+      <JsonLd schema={projectSchema} />
+      <JsonLd schema={breadcrumbSchema} />
+      <CaseStudy project={project} locale={locale} nextProject={nextProject} related={related} />
+    </>
+  );
 }

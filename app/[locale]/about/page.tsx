@@ -13,6 +13,10 @@ import Reveal from "@/components/cinematic/reveal";
 import ProjectCard from "@/components/projects/project-card";
 import { ASPECT_CLASS } from "@/types/content";
 
+import { buildAlternateLanguages } from "@/lib/seo/metadata";
+import { buildBreadcrumbSchema } from "@/lib/seo/json-ld";
+import JsonLd from "@/components/seo/json-ld";
+
 export async function generateMetadata({
   params,
 }: {
@@ -22,11 +26,27 @@ export async function generateMetadata({
   const locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
   const settings = await getSiteSettings(locale);
+  const portrait = getPublicMediaUrl(settings.heroPosterPath);
 
   return {
     title: dict.about.title,
     description: settings.shortIntro || settings.tagline || dict.about.contactBody,
-    alternates: { canonical: `${siteUrl}/${locale}/about` },
+    alternates: {
+      canonical: `${siteUrl}/${locale}/about`,
+      languages: buildAlternateLanguages("/about"),
+    },
+    openGraph: {
+      title: `${dict.about.title} — ${settings.ownerName || settings.brandName}`,
+      description: settings.shortIntro || settings.tagline || dict.about.contactBody,
+      url: `${siteUrl}/${locale}/about`,
+      images: portrait ? [{ url: portrait, width: 1200, height: 630 }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${dict.about.title} — ${settings.ownerName || settings.brandName}`,
+      description: settings.shortIntro || settings.tagline || dict.about.contactBody,
+      images: portrait ? [portrait] : undefined,
+    },
   };
 }
 
@@ -47,8 +67,18 @@ export default async function AboutPage({
   const selected = projects.slice(0, 3);
   const portrait = getPublicMediaUrl(settings.heroPosterPath);
 
+  const breadcrumbs = buildBreadcrumbSchema(
+    [
+      { name: dict.nav.home, path: "" },
+      { name: dict.about.title, path: "/about" },
+    ],
+    locale,
+  );
+
   return (
     <>
+      <JsonLd schema={breadcrumbs} />
+
       <PageHeader
         number="04"
         kicker={dict.nav.about}

@@ -6,6 +6,10 @@ import { siteUrl } from "@/lib/utils";
 import PageHeader from "@/components/layout/page-header";
 import GalleryBrowser from "@/components/gallery/gallery-browser";
 
+import { buildAlternateLanguages } from "@/lib/seo/metadata";
+import { buildBreadcrumbSchema } from "@/lib/seo/json-ld";
+import JsonLd from "@/components/seo/json-ld";
+
 export async function generateMetadata({
   params,
 }: {
@@ -18,7 +22,20 @@ export async function generateMetadata({
   return {
     title: dict.gallery.title,
     description: dict.gallery.intro,
-    alternates: { canonical: `${siteUrl}/${locale}/gallery` },
+    alternates: {
+      canonical: `${siteUrl}/${locale}/gallery`,
+      languages: buildAlternateLanguages("/gallery"),
+    },
+    openGraph: {
+      title: dict.gallery.title,
+      description: dict.gallery.intro,
+      url: `${siteUrl}/${locale}/gallery`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.gallery.title,
+      description: dict.gallery.intro,
+    },
   };
 }
 
@@ -31,8 +48,18 @@ export default async function GalleryPage({
   const dict = getDictionary(locale);
   const items = await getGalleryItems(locale);
 
+  const breadcrumbs = buildBreadcrumbSchema(
+    [
+      { name: dict.nav.home, path: "" },
+      { name: dict.gallery.title, path: "/gallery" },
+    ],
+    locale,
+  );
+
   return (
     <>
+      <JsonLd schema={breadcrumbs} />
+
       <PageHeader
         number="02"
         kicker={dict.nav.gallery}

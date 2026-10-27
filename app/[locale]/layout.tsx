@@ -9,6 +9,9 @@ import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n/config";
 import SiteHeader from "@/components/layout/site-header";
 import SiteFooter from "@/components/layout/site-footer";
 import { fontVariables } from "@/lib/fonts";
+import { SEO_KEYWORDS, ROBOTS_DIRECTIVES, buildAlternateLanguages } from "@/lib/seo/metadata";
+import { buildPersonAndBusinessSchema, buildWebsiteSchema } from "@/lib/seo/json-ld";
+import JsonLd from "@/components/seo/json-ld";
 
 export const dynamic = "force-dynamic";
 
@@ -37,16 +40,17 @@ export async function generateMetadata({
       template: `%s — ${settings.brandName}`,
     },
     description,
+    keywords: SEO_KEYWORDS,
+    authors: [{ name: settings.ownerName || settings.brandName, url: siteUrl }],
+    creator: settings.ownerName || settings.brandName,
+    publisher: settings.brandName,
+    category: "Filmmaking & Video Production",
     applicationName: settings.brandName,
     alternates: {
       canonical,
-      languages: {
-        en: `${siteUrl}/en`,
-        fr: `${siteUrl}/fr`,
-        ar: `${siteUrl}/ar`,
-        "x-default": `${siteUrl}/en`,
-      },
+      languages: buildAlternateLanguages(""),
     },
+    robots: ROBOTS_DIRECTIVES,
     openGraph: {
       type: "website",
       siteName: settings.brandName,
@@ -54,7 +58,7 @@ export async function generateMetadata({
       description,
       url: canonical,
       locale: dict.htmlLang,
-      images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : undefined,
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: title }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
@@ -82,9 +86,15 @@ export default async function LocaleLayout({
 
   const dict = getDictionary(locale);
   const settings = await getSiteSettings(locale);
+  const personSchema = buildPersonAndBusinessSchema(settings, locale);
+  const websiteSchema = buildWebsiteSchema(settings, locale);
 
   return (
     <html lang={dict.htmlLang} dir={dict.dir} className={fontVariables}>
+      <head>
+        <JsonLd schema={personSchema} />
+        <JsonLd schema={websiteSchema} />
+      </head>
       <body className="min-h-dvh bg-black text-ink">
         <a
           href="#main"

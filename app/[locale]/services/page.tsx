@@ -8,6 +8,10 @@ import Reveal from "@/components/cinematic/reveal";
 import ServiceCard, { formatPrice } from "@/components/services/service-card";
 import Link from "next/link";
 
+import { buildAlternateLanguages } from "@/lib/seo/metadata";
+import { buildBreadcrumbSchema, buildServiceCatalogSchema } from "@/lib/seo/json-ld";
+import JsonLd from "@/components/seo/json-ld";
+
 export async function generateMetadata({
   params,
 }: {
@@ -20,7 +24,20 @@ export async function generateMetadata({
   return {
     title: dict.services.title,
     description: dict.services.intro,
-    alternates: { canonical: `${siteUrl}/${locale}/services` },
+    alternates: {
+      canonical: `${siteUrl}/${locale}/services`,
+      languages: buildAlternateLanguages("/services"),
+    },
+    openGraph: {
+      title: dict.services.title,
+      description: dict.services.intro,
+      url: `${siteUrl}/${locale}/services`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.services.title,
+      description: dict.services.intro,
+    },
   };
 }
 
@@ -39,8 +56,20 @@ export default async function ServicesPage({
       .map((item) => ({ ...item, serviceName: service.name, currency: item.currency || service.currency })),
   );
 
+  const breadcrumbs = buildBreadcrumbSchema(
+    [
+      { name: dict.nav.home, path: "" },
+      { name: dict.services.title, path: "/services" },
+    ],
+    locale,
+  );
+  const serviceCatalog = buildServiceCatalogSchema(services, locale);
+
   return (
     <>
+      <JsonLd schema={breadcrumbs} />
+      <JsonLd schema={serviceCatalog} />
+
       <PageHeader
         number="03"
         kicker={dict.nav.services}

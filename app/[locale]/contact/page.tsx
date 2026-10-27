@@ -8,6 +8,10 @@ import PageHeader from "@/components/layout/page-header";
 import ContactForm from "@/components/contact/contact-form";
 import Reveal from "@/components/cinematic/reveal";
 
+import { buildAlternateLanguages } from "@/lib/seo/metadata";
+import { buildBreadcrumbSchema } from "@/lib/seo/json-ld";
+import JsonLd from "@/components/seo/json-ld";
+
 export async function generateMetadata({
   params,
 }: {
@@ -20,8 +24,20 @@ export async function generateMetadata({
   return {
     title: dict.contact.title,
     description: dict.contact.intro,
-    alternates: { canonical: `${siteUrl}/${locale}/contact` },
-    openGraph: { title: dict.contact.title, description: dict.contact.intro },
+    alternates: {
+      canonical: `${siteUrl}/${locale}/contact`,
+      languages: buildAlternateLanguages("/contact"),
+    },
+    openGraph: {
+      title: dict.contact.title,
+      description: dict.contact.intro,
+      url: `${siteUrl}/${locale}/contact`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.contact.title,
+      description: dict.contact.intro,
+    },
   };
 }
 
@@ -59,8 +75,18 @@ export default async function ContactPage({
       : null,
   ].filter((value): value is NonNullable<typeof value> => Boolean(value));
 
+  const breadcrumbs = buildBreadcrumbSchema(
+    [
+      { name: dict.nav.home, path: "" },
+      { name: dict.contact.title, path: "/contact" },
+    ],
+    locale,
+  );
+
   return (
     <>
+      <JsonLd schema={breadcrumbs} />
+
       <PageHeader
         number="05"
         kicker={dict.nav.contact}
