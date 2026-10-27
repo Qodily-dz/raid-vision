@@ -10,6 +10,17 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  {
+    // Never lint build output or dependencies: they are generated, and the
+    // generated Next.js route types trip no-explicit-any/no-unused-vars.
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "out/**",
+      "build/**",
+      "next-env.d.ts",
+    ],
+  },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
 
