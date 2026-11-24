@@ -18,6 +18,7 @@ const CODE_LABEL: Record<ActionCode, string> = {
   slugTaken: "That slug is already in use",
   required: "Fill in the required fields",
   duplicateSlug: "Could not create a unique slug",
+  inUse: "File is still in use",
 };
 
 type FormShellProps = {

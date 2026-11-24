@@ -18,7 +18,8 @@ export type ActionCode =
   | "notFound"
   | "slugTaken"
   | "required"
-  | "duplicateSlug";
+  | "duplicateSlug"
+  | "inUse";
 
 export type ActionState = {
   ok: boolean;

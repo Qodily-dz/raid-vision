@@ -3,6 +3,7 @@
 import { assertAdmin } from "@/lib/auth/admin";
 import { MEDIA_BUCKET } from "@/lib/media/storage";
 import { createClient } from "@/lib/supabase/server";
+import { getReferencedMediaPaths } from "@/lib/queries/media";
 import { fail, ok, type ActionState } from "./state";
 import { revalidateAdmin, revalidatePublic } from "./revalidate";
 
@@ -28,6 +29,9 @@ export async function deleteMediaObjectAction(
   if (!path || path.includes("..") || path.startsWith("/")) {
     return fail("required", { path: true });
   }
+
+  const referenced = await getReferencedMediaPaths();
+  if (referenced.has(path)) return fail("inUse");
 
   const supabase = await createClient();
   const { error } = await supabase.storage.from(MEDIA_BUCKET).remove([path]);

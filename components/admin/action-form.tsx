@@ -15,6 +15,7 @@ const feedback: Record<string, string> = {
   unpublished: "Moved to draft",
   error: "Something went wrong",
   notFound: "Record not found",
+  inUse: "File is still in use",
 };
 
 /** Small server-action form for row-level admin controls. */
