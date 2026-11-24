@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
-import { getAdminProject, getAdminProjectCategoryIds, getAllCategories } from "@/lib/queries/projects";
+import { getAdminProject, getAdminProjectCategoryIds, getAdminProjectMedia, getAdminProjectSections, getAllCategories } from "@/lib/queries/projects";
 import { AdminPageHeader } from "@/components/admin/primitives";
 import ProjectForm from "@/components/admin/project-form";
+import ProjectContentEditor from "@/components/admin/project-content-editor";
 
 export const metadata = { title: "Edit project" };
 
@@ -11,9 +12,11 @@ export default async function EditProjectPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [project, categories] = await Promise.all([
+  const [project, categories, sections, media] = await Promise.all([
     getAdminProject(id),
     getAllCategories("en"),
+    getAdminProjectSections(id),
+    getAdminProjectMedia(id),
   ]);
 
   if (!project) notFound();
@@ -27,6 +30,7 @@ export default async function EditProjectPage({
         subtitle={project.slug}
       />
       <ProjectForm project={project} categories={categories} categoryIds={categoryIds} />
+      <ProjectContentEditor projectId={project.id} sections={sections} media={media} />
     </div>
   );
 }
