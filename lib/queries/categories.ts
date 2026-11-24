@@ -75,3 +75,19 @@ export async function getCategoryBySlug(slug: string): Promise<CategoryView | nu
   const row = data as Pick<CategoryRow, "id" | "slug" | "name_i18n">;
   return { id: row.id, slug: row.slug, name: getLocalizedValue(row.name_i18n, "en") };
 }
+
+export async function getAdminCategories(): Promise<CategoryRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*")
+    .order("sort_order", { ascending: true })
+    .order("slug", { ascending: true });
+
+  if (error) {
+    logQueryError("getAdminCategories", error);
+    return [];
+  }
+
+  return (data ?? []) as CategoryRow[];
+}

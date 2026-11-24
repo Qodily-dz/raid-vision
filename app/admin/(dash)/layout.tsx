@@ -28,6 +28,7 @@ export default async function DashboardLayout({
         items={[
           { href: "/admin", label: dict.admin.nav.overview, exact: true },
           { href: "/admin/projects", label: dict.admin.nav.projects },
+          { href: "/admin/categories", label: "Categories" },
           { href: "/admin/gallery", label: dict.admin.nav.gallery },
           { href: "/admin/services", label: dict.admin.nav.services },
           { href: "/admin/messages", label: dict.admin.nav.messages, badge: counts.newInquiries },
