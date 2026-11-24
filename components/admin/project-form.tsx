@@ -221,9 +221,9 @@ export default function ProjectForm({
             )}
           </AdminPanel>
 
-          <AdminPanel title="Next layer" description="The project editor is ready for sections and media blocks next.">
+          <AdminPanel title="Build the case study" description="Save the project basics, then use the sections and media editor below.">
             <p className="text-sm leading-relaxed text-ink-dim">
-              Add the cover first, then build the case study with a brief, process, credits and supporting media.
+              Start with the cover and publishing state, then shape the narrative with a brief, process, credits and supporting media.
             </p>
           </AdminPanel>
         </div>
