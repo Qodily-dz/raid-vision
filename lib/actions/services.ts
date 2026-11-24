@@ -275,7 +275,12 @@ async function replacePackages(serviceId: string, formData: FormData) {
     String(value).trim(),
   );
   const prices = formData.getAll("packagePrice").map((value) => String(value).trim());
-  const featured = formData.getAll("packageFeatured").map((value) => String(value));
+  const featuredIndexes = new Set(
+    formData
+      .getAll("packageFeatured")
+      .map((value) => Number.parseInt(String(value), 10))
+      .filter((value) => Number.isInteger(value)),
+  );
 
   const rows = names
     .map((name, index) => ({ name, index }))
@@ -288,7 +293,7 @@ async function replacePackages(serviceId: string, formData: FormData) {
       },
       price: parsePrice(prices[row.index] ?? ""),
       currency: (str(formData, "currency") || "DZD").toUpperCase().slice(0, 8),
-      featured: featured[row.index] === "on",
+      featured: featuredIndexes.has(row.index),
       active: true,
       sort_order: row.index,
     }));

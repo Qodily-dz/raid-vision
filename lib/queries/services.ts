@@ -185,3 +185,31 @@ export async function getAdminService(id: string): Promise<ServiceRow | null> {
 
   return (data as ServiceRow | null) ?? null;
 }
+
+export type AdminServiceEditor = {
+  service: ServiceRow;
+  features: ServiceFeatureRow[];
+  packages: ServicePackageRow[];
+};
+
+export async function getAdminServiceEditor(id: string): Promise<AdminServiceEditor | null> {
+  const supabase = await createClient();
+
+  const [service, features, packages] = await Promise.all([
+    supabase.from("services").select("*").eq("id", id).maybeSingle(),
+    supabase.from("service_features").select("*").eq("service_id", id).order("sort_order"),
+    supabase.from("service_packages").select("*").eq("service_id", id).order("sort_order"),
+  ]);
+
+  if (service.error) logQueryError("getAdminServiceEditor.service", service.error);
+  if (features.error) logQueryError("getAdminServiceEditor.features", features.error);
+  if (packages.error) logQueryError("getAdminServiceEditor.packages", packages.error);
+
+  if (!service.data) return null;
+
+  return {
+    service: service.data as ServiceRow,
+    features: (features.data ?? []) as ServiceFeatureRow[],
+    packages: (packages.data ?? []) as ServicePackageRow[],
+  };
+}
