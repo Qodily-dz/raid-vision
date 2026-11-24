@@ -9,6 +9,11 @@
 
 create schema if not exists raid_db;
 
+-- The helper functions below reference tables declared later in this migration.
+-- PostgreSQL normally validates SQL function bodies immediately, so defer that
+-- check until the schema objects exist.
+set check_function_bodies = off;
+
 -- -----------------------------------------------------------------------------
 -- Shared helpers
 -- -----------------------------------------------------------------------------
@@ -107,6 +112,8 @@ revoke all on function raid_db.is_service_public(uuid) from public;
 grant execute on function raid_db.is_service_public(uuid) to anon, authenticated;
 revoke all on function raid_db.set_updated_at() from public;
 revoke all on function raid_db.prepare_contact_message() from public;
+
+set check_function_bodies = on;
 
 -- -----------------------------------------------------------------------------
 -- admin_users — links Supabase Auth users to CMS permissions
@@ -208,7 +215,7 @@ create table raid_db.projects (
   featured boolean not null default false,
   sort_order integer not null default 0,
   seo_title_i18n jsonb not null default '{}'::jsonb,
-  seo_description_i18n not null default '{}'::jsonb,
+  seo_description_i18n jsonb not null default '{}'::jsonb,
   published_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),

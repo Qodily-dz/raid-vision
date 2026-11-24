@@ -50,7 +50,7 @@ export default function GalleryTile({
           />
         ) : (
           <span className="kicker absolute inset-0 grid place-items-center text-ink-faint">
-            {isInstagram ? "INSTAGRAM" : "—"}
+            {isInstagram ? "IG" : "—"}
           </span>
         )}
 

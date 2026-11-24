@@ -81,7 +81,7 @@ export default function GalleryBrowser({ items, locale }: GalleryBrowserProps) {
       ) : (
         <div className="frame mt-8 grid min-h-[45vh] place-items-center text-center">
           <div>
-            <span className="kicker text-violet">{items.length === 0 ? "404" : "0"}</span>
+            <span className="kicker text-violet">0</span>
             <p className="display mt-3 text-2xl">
               {items.length === 0 ? dict.gallery.emptyTitle : dict.common.empty}
             </p>

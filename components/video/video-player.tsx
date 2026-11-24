@@ -182,7 +182,7 @@ export default function VideoPlayer({
                   aria-label={muted ? dict.common.unmuteVideo : dict.common.muteVideo}
                   className="border border-ink/25 px-2 py-1 transition-colors hover:border-violet hover:text-violet"
                 >
-                  {muted ? "SOUND OFF" : "SOUND ON"}
+                  {muted ? dict.common.soundOff : dict.common.soundOn}
                 </button>
               ) : null}
               <button
@@ -191,7 +191,7 @@ export default function VideoPlayer({
                 aria-label={dict.common.viewProject}
                 className="border border-ink/25 px-2 py-1 transition-colors hover:border-violet hover:text-violet"
               >
-                FULL
+                {dict.common.fullscreen}
               </button>
             </div>
           </div>

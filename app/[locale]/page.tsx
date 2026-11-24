@@ -448,14 +448,14 @@ export default async function HomePage({
             <dl className="mt-12 grid gap-8 border-t border-ink/10 pt-8 sm:grid-cols-3">
               <div>
                 <dt className="kicker text-ink-faint">{dict.contact.location}</dt>
-                <dd className="mt-2 text-sm">{settings.location || "—"}</dd>
+                <dd className="mt-2 text-sm">{settings.location || dict.common.notAvailable}</dd>
               </div>
               <div>
                 <dt className="kicker text-ink-faint">{dict.contact.availability}</dt>
                 <dd className="mt-2 text-sm">{availability}</dd>
               </div>
               <div>
-                <dt className="kicker text-ink-faint">Instagram</dt>
+                  <dt className="kicker text-ink-faint">{dict.common.instagram}</dt>
                 <dd className="mt-2 text-sm">
                   {settings.social.instagram ? (
                     <a
@@ -533,7 +533,7 @@ export default async function HomePage({
 
                 <div className="py-5">
                   <dt className="kicker text-ink-faint">{dict.contact.location}</dt>
-                  <dd className="mt-2 text-lg">{settings.location || "—"}</dd>
+                  <dd className="mt-2 text-lg">{settings.location || dict.common.notAvailable}</dd>
                 </div>
 
                 <div className="py-5">

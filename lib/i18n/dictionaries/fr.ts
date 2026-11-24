@@ -48,6 +48,17 @@ const fr: Dictionary = {
     videoUnavailable: "Cette vidéo n'a pas pu être chargée.",
     openInNewTab: "Ouvre dans un nouvel onglet",
     scroll: "Défiler",
+    play: "Lire",
+    pause: "Pause",
+    soundOff: "Son coupé",
+    soundOn: "Son activé",
+    fullscreen: "Plein écran",
+    sort: "Trier",
+    curated: "Sélection",
+    newest: "Récent",
+    oldest: "Ancien",
+    aToZ: "A–Z",
+    instagram: "Instagram",
   },
 
   home: {

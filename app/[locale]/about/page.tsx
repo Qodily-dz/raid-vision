@@ -125,7 +125,7 @@ export default async function AboutPage({
           <dl className="mt-12 grid gap-8 border-t border-ink/10 pt-8 sm:grid-cols-2">
             <div>
               <dt className="kicker text-ink-faint">{dict.contact.location}</dt>
-              <dd className="mt-2 text-sm">{settings.location || "—"}</dd>
+              <dd className="mt-2 text-sm">{settings.location || dict.common.notAvailable}</dd>
             </div>
             <div>
               <dt className="kicker text-ink-faint">{dict.contact.availability}</dt>

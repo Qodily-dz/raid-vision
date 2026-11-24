@@ -1,4 +1,5 @@
 import { siteUrl } from "@/lib/utils";
+import { getPublicMediaUrl } from "@/lib/media/storage";
 import type { SiteSettingsView, ProjectDetailView, ServiceView } from "@/types/content";
 
 /**
@@ -25,7 +26,7 @@ export function buildPersonAndBusinessSchema(settings: SiteSettingsView, locale:
       settings.tagline ||
       "Filmmaker, director of photography, and visual storyteller specializing in cinematic commercials, music videos, and documentaries.",
     url: `${siteUrl}/${locale}`,
-    image: settings.heroPosterPath ? `${siteUrl}/api/og` : undefined,
+    image: getPublicMediaUrl(settings.heroPosterPath) || undefined,
     sameAs,
     email: settings.email ? `mailto:${settings.email}` : undefined,
     telephone: settings.phone || undefined,
@@ -109,7 +110,7 @@ export function buildVideoObjectSchema({
     name,
     description: description || name,
     thumbnailUrl: thumbnailUrl ? [thumbnailUrl] : [`${siteUrl}/favicon.ico`],
-    uploadDate: uploadDate || new Date().toISOString(),
+    ...(uploadDate ? { uploadDate } : {}),
     contentUrl: contentUrl || undefined,
     embedUrl: embedUrl || undefined,
   };

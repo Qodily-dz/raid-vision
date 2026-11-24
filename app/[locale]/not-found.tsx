@@ -14,7 +14,7 @@ export default function LocaleNotFound() {
     <section className="relative grid min-h-[80vh] place-items-center overflow-hidden">
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,45,32,0.12),transparent_65%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(158,92,255,0.14),transparent_65%)]"
       />
       <div className="grain absolute inset-0 opacity-[0.05]" aria-hidden="true" />
 

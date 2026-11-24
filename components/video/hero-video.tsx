@@ -109,7 +109,7 @@ export default function HeroVideo({
           className="absolute bottom-6 end-6 z-20 flex items-center gap-2 border border-ink/25 bg-black/40 px-3 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-dim backdrop-blur-sm transition-colors hover:border-violet hover:text-violet"
         >
           <span aria-hidden="true">{playing ? "❚❚" : "▶"}</span>
-          {playing ? "PAUSE" : "PLAY"}
+          {playing ? dict.common.pause : dict.common.play}
         </button>
       ) : null}
     </div>

@@ -99,12 +99,8 @@ idempotent. The file ends with the statements that undo it.
 2. **Grant admin** — run in the SQL editor, substituting the email:
 
    ```sql
-   insert into raid_db.admin_users (user_id, email, role)
-   values (
-     '<user-uuid>',
-     'you@example.com',
-     'admin'
-   );
+   insert into raid_db.admin_users (user_id, role)
+   values ('<user-uuid>', 'owner');
    ```
 
    To find the UUID: `select id, email from auth.users;`
@@ -122,18 +118,17 @@ Authorization is enforced server-side on every mutation by `requireAdmin` /
 Implemented: login, forgot/reset password, auth callback, dashboard overview,
 project listing, and shared form/upload/auth components.
 
-**Still to build** — the nav links to these, so they 404 for a signed-in admin:
+Implemented admin routes:
 
-- `/admin/projects/new` and `/admin/projects/[id]`
-- `/admin/gallery`
-- `/admin/services`
-- `/admin/messages`
-- `/admin/media`
-- `/admin/settings`
+- `/admin/projects/new` and `/admin/projects/[id]` — project metadata, cover media,
+  publishing, categories and localized SEO fields.
+- `/admin/gallery`, `/admin/services`, `/admin/messages`, `/admin/media` and
+  `/admin/settings` — working inventory/settings surfaces backed by the existing
+  queries and server actions.
 
-The server actions they need already exist in `lib/actions/` (`projects.ts`,
-`gallery.ts`, `services.ts`, `inquiries.ts`, `media.ts`, `settings.ts`), so
-these are UI-only tasks.
+Next CMS pass: add the create/edit forms and publish/reorder controls for gallery
+items and services, detail/status actions for messages, and section/media-block
+editing inside project case studies.
 
 ## Uploads
 

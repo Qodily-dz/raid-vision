@@ -110,13 +110,13 @@ export default function ProjectBrowser({ projects, categories, locale }: Project
           </p>
 
           <div className="flex items-center gap-1">
-            <span className="kicker me-2 text-ink-faint">SORT</span>
+            <span className="kicker me-2 text-ink-faint">{dict.common.sort}</span>
             {(
               [
-                ["curated", "Curated"],
+                ["curated", dict.common.curated],
                 ["newest", dict.project.publishedOn],
-                ["oldest", "↑"],
-                ["az", "A–Z"],
+                ["oldest", dict.common.oldest],
+                ["az", dict.common.aToZ],
               ] as [SortKey, string][]
             ).map(([key, label]) => (
               <button
@@ -165,7 +165,7 @@ export default function ProjectBrowser({ projects, categories, locale }: Project
       ) : (
         <div className="frame mt-12 grid min-h-[45vh] place-items-center text-center">
           <div>
-            <span className="kicker text-violet">404</span>
+            <span className="kicker text-violet">0</span>
             <p className="display mt-3 text-3xl">{dict.work.emptyTitle}</p>
             <p className="mt-3 max-w-measure text-ink-dim">{dict.work.emptyBody}</p>
             <button type="button" onClick={() => setCategory(null)} className="btn btn-outline mt-8">

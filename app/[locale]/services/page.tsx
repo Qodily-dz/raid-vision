@@ -92,7 +92,7 @@ export default async function ServicesPage({
         ) : (
           <div className="frame grid min-h-[40vh] place-items-center text-center">
             <div>
-              <span className="kicker text-violet">404</span>
+              <span className="kicker text-violet">0</span>
               <p className="display mt-3 text-3xl">{dict.services.emptyTitle}</p>
               <p className="mt-3 text-ink-dim">{dict.services.emptyBody}</p>
             </div>

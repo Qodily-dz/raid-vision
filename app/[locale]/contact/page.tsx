@@ -130,7 +130,7 @@ export default async function ContactPage({
 
               <div className="py-5">
                 <dt className="kicker text-ink-faint">{dict.contact.location}</dt>
-                <dd className="mt-2 text-lg">{settings.location || "—"}</dd>
+                <dd className="mt-2 text-lg">{settings.location || dict.common.notAvailable}</dd>
               </div>
 
               <div className="py-5">

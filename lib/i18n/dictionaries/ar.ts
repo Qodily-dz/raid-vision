@@ -48,6 +48,17 @@ const ar: Dictionary = {
     videoUnavailable: "تعذّر تحميل هذا الفيديو.",
     openInNewTab: "يفتح في تبويب جديد",
     scroll: "مرّر",
+    play: "تشغيل",
+    pause: "إيقاف مؤقت",
+    soundOff: "الصوت متوقف",
+    soundOn: "الصوت يعمل",
+    fullscreen: "ملء الشاشة",
+    sort: "ترتيب",
+    curated: "مختارة",
+    newest: "الأحدث",
+    oldest: "الأقدم",
+    aToZ: "أ–ي",
+    instagram: "إنستغرام",
   },
 
   home: {

@@ -32,7 +32,7 @@ export default function PageHeader({
       <div aria-hidden="true" className="grain absolute inset-0 opacity-[0.06]" />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,45,32,0.10),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(158,92,255,0.12),transparent_56%),radial-gradient(ellipse_at_80%_20%,rgba(88,226,235,0.06),transparent_42%)]"
       />
 
       <div className="shell-wide relative pb-14 sm:pb-20">

@@ -55,6 +55,17 @@ const en = {
     videoUnavailable: "This video could not be loaded.",
     openInNewTab: "Opens in a new tab",
     scroll: "Scroll",
+    play: "Play",
+    pause: "Pause",
+    soundOff: "Sound off",
+    soundOn: "Sound on",
+    fullscreen: "Fullscreen",
+    sort: "Sort",
+    curated: "Curated",
+    newest: "Newest",
+    oldest: "Oldest",
+    aToZ: "A–Z",
+    instagram: "Instagram",
   },
 
   home: {

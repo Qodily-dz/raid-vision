@@ -23,7 +23,7 @@ export default function SiteFooter({
   ];
 
   const social: FooterLink[] = [
-    { href: settings.social.instagram ?? "", label: "Instagram", external: true },
+    { href: settings.social.instagram ?? "", label: dict.common.instagram, external: true },
     { href: settings.social.youtube ?? "", label: "YouTube", external: true },
     { href: settings.social.vimeo ?? "", label: "Vimeo", external: true },
     { href: settings.social.tiktok ?? "", label: "TikTok", external: true },
